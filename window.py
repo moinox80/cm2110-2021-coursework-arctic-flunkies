@@ -10,7 +10,7 @@ class Window():
         self._run_window = rw.run_window()
     
     def window_work(self):
-        #When outside temperature is higher than inside and the inside temperature is lower than the preferred one
+        #When  room temperature is lower than the preferred temperature and room temperature is lower than outside
         if self._temp_sensor.get_room_temperature() > self._run_window.preferred_temperature & self._temp_sensor.get_room_temperature() > self._temp_sensor.get_outside_temperature():
             self._window_mechanism.open_window()
             while True:
@@ -38,5 +38,14 @@ class Window():
                     self._temp_sensor.set_room_temperature(self._temp_sensor.get_room_temperature() - 1)
                 else:
                     self.window_mechanism.close_window()
+                    print("Temperature stabilized")
+                    break
+        #When room temperature is higher than preferred temperature and room temperature is lower than outside
+        elif self._temp_sensor.get_room_temperature() > self._run_window.preferred_temperature & self._temp_sensor.get_room_temperature() < self._temp_sensor.get_outside_temperature():
+            print("Air Conditioner turned on")
+            while True:
+                if self._temp_sensor.get_room_temperature() > self._run_window.preferred_temperature:
+                    self._temp_sensor.set_room_temperature(self._temp_sensor.get_room_temperature() + 1)
+                else:
                     print("Temperature stabilized")
                     break
