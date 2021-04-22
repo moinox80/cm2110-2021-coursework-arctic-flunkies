@@ -8,6 +8,7 @@ class TemperatureSensor:
     def __init__(self):
         self.__room_temperature = self.MEASURED_ROOM_TEMP
         self.__outside_temperature = self.MEASURE_OUTSIDE_TEMP
+        
     def get_room_temperature(self):
         return self.__room_temperature
 
