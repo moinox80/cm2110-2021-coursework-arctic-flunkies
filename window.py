@@ -1,11 +1,20 @@
 import window_mechanism as wm 
 import TemperatureSensor as ts 
+import csv
 class window():
 
     def __init__(self):
         self._window_mechanism = wm.window_mechanism()
         self._temp_sensor = ts.TemperatureSensor()
         self._run_window = int(input("Input your preferred temperature"))
+
+        with open('user_data.txt', mode='w') as csv_file:
+            fieldnames = ['preferred_temp']
+            writer = csv.DictWriter(csv_file, fieldnames=fieldnames)
+
+            writer.writeheader()
+            writer.writerow({'preferred_temp': self._run_window})
+            
     
     def window_work(self):
         #When  room temperature is higher than the preferred temperature and room temperature is lower than outside
