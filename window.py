@@ -57,3 +57,6 @@ class window():
         
     def setPreferredTemperature(self, new_value):
         self.__preferred_temperature = new_value
+
+    def getPreferredTemperature(self):
+        return self.__preferred_temperature
