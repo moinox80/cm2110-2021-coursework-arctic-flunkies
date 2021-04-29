@@ -16,14 +16,14 @@ with open('user_data.txt', mode='r') as csv_file:
     
     if line_count < 1:
         preferred_temp = int(input("Welcome to SmartWindow, please input your preferred home temperature: "))
-        window.setPreferredTemperature(preferred_temp)
+        window.set_preferred_temperature(preferred_temp)
         
     else:
         line_count = 0
         for row in csv_reader:
             if line_count == 0:
                 line_count += 1
-        window.setPreferredTemperature(row["temp"])
+        window.set_preferred_temperature(row["temp"])
         api.set_city(row["city"])
         print(row)
         
@@ -52,13 +52,13 @@ while True:
         city = input("Please input your city: ")
         temp = int(input("Please input the your preferred temperature: "))
         api.set_city(city)
-        window.setPreferredTemperature(temp)
+        window.set_preferred_temperature(temp)
         with open('user_data.txt', mode='w') as csv_file:
             fieldnames = ['temp', 'city']
             writer = csv.DictWriter(csv_file, fieldnames=fieldnames)
 
             writer.writeheader()
-            writer.writerow({'temp': window.getPreferredTemperature(), 'city': api.get_city()})
+            writer.writerow({'temp': window.get_preferred_temperature(), 'city': api.get_city()})
         
         print("Changes saved, please restart the program")
         break
@@ -68,7 +68,7 @@ while True:
             writer = csv.DictWriter(csv_file, fieldnames=fieldnames)
 
             writer.writeheader()
-            writer.writerow({'temp': window.getPreferredTemperature(), 'city': api.get_city()})
+            writer.writerow({'temp': window.get_preferred_temperature(), 'city': api.get_city()})
         with open('user_data.txt', mode='r') as csv_file:
             csv_reader = csv.DictReader(csv_file)
             line_count = 0
