@@ -15,7 +15,7 @@ class weatherApi:
             line_count += 1
     
         if line_count < 1:
-            CITY = input('Please input the city')
+            CITY = input('Please input the city you live in: ')
         else:
             line_count = 0
             for row in csv_reader:
@@ -73,7 +73,7 @@ class weatherApi:
         return self.__weather_description
 
     def get_weather_data(self):
-        return "Temperature in " + str(self.__city) + " is " + str(self.__current_temperature) + "C\n There is currently " + str(self.__weather_description) + "\nHumidity is " + str(self.__current_humidity)
+        return "Temperature in " + str(self.__city) + " is " + str(self.__current_temperature) + "C\nThere is currently " + str(self.__weather_description) + "\nHumidity is " + str(self.__current_humidity)
 
     def set_city(self, new_value):
         self.__city = new_value
