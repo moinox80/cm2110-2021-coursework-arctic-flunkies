@@ -2,7 +2,7 @@ import requests
 import json
 import csv
 
-class weatherApi:
+class WeatherApi:
     CURRENT_TEMP = ""
     CURRENT_HUMIDITY = ""
     CURRENT_WEATHER = ""

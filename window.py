@@ -1,10 +1,10 @@
 import window_mechanism as wm 
 import TemperatureSensor as ts 
 import csv
-class window():
+class Window():
 
     def __init__(self):
-        self.__window_mechanism = wm.window_mechanism()
+        self.__window_mechanism = wm.WindowMechanism()
         self.__temp_sensor = ts.TemperatureSensor()
         self.__preferred_temperature = 0
             
