@@ -1,13 +1,30 @@
 import requests
 import json
-
+import csv
 
 class weatherApi:
     CURRENT_TEMP = ""
     CURRENT_HUMIDITY = ""
     CURRENT_WEATHER = ""
     WEATHER_DESCRIPTION = ""
-    CITY = ""
+    CITY=""
+    with open('user_data.txt', mode='r') as csv_file:
+        csv_reader = csv.DictReader(csv_file)
+        line_count = 0
+        for row in csv_reader:
+            line_count += 1
+    
+        if line_count < 1:
+            CITY = input('Please input the city')
+        else:
+            line_count = 0
+            for row in csv_reader:
+                if line_count == 0:
+                    line_count += 1
+            CITY = row["city"]
+    
+        line_count += 1
+    
     url = "https://community-open-weather-map.p.rapidapi.com/find"
 
     querystring = {"q": str(CITY),"cnt":"1","mode":"null","lon":"0","type":"link, accurate","lat":"0","units":"metric"}
