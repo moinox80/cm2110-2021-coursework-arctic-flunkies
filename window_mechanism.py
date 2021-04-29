@@ -3,7 +3,7 @@ class WindowMechanism():
     OPEN=1
     CLOSED=0  
     
-    def __init__():
+    def __init__(self):
         self.__status = self.OPEN
         self.__curtain_status = self.OPEN
 

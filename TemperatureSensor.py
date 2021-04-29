@@ -1,7 +1,7 @@
 import random
 import Weather_api as wa
 class TemperatureSensor:
-    api = wa.weatherApi()
+    api = wa.WeatherApi()
     MEASURED_ROOM_TEMP = random.uniform(15.0, 28.0)
     MEASURED_OUTSIDE_TEMP = api.get_current_temperature()
 

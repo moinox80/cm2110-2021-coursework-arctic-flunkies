@@ -6,7 +6,7 @@ import csv
 
 window = w.Window()
 api = wa.WeatherApi()
-window_mechanism = wm.window_mechanism()
+window_mechanism = wm.WindowMechanism()
 
 with open('user_data.txt', mode='r') as csv_file:
     csv_reader = csv.DictReader(csv_file)
