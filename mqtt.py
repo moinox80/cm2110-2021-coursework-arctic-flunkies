@@ -49,22 +49,22 @@ class MQTTClient:
         self.__stop_threads = True
         # self._f.close()
     
-    def __on_connect(self, client, userdata, flags, rc):
+    def __on_connect(self, userdata, flags, rc):
         pass
 
-    def __on_disconnect(self, client, userdata, rc):
+    def __on_disconnect(self, userdata, rc):
         pass
     
-    def __on_message(self, client, userdata, msg):
+    def __on_message(self, userdata, msg):
         pass
 
-    def __on_publish(self, client, userdata, mid):
+    def __on_publish(self, userdata, mid):
         pass
 
-    def __on_subscribe(self, client, userdata, mid, granted_qos):
+    def __on_subscribe(self, userdata, mid, granted_qos):
         pass
     
-    def __on_unsubscribe(self, client, userdata, mid):
+    def __on_unsubscribe(self, userdata, mid):
         pass
 
     def set_callbacks(self, callbacks):
