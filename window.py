@@ -55,8 +55,8 @@ class Window():
                     print("Temperature stabilized")
                     break
         
-    def setPreferredTemperature(self, new_value):
+    def set_preferred_temperature(self, new_value):
         self.__preferred_temperature = new_value
 
-    def getPreferredTemperature(self):
+    def get_preferred_temperature(self):
         return self.__preferred_temperature
