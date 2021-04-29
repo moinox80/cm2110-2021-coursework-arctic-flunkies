@@ -9,11 +9,11 @@ class window_mechanism():
         print("WINDOW OPENED")
 
     def close_window(self):
-        self._status = self.CLOSE
+        self.__status = self.CLOSE
         print("WINDOW CLOSED")
 
     def window_status(self):
-        if self._status == 1:
+        if self.__status == 1:
             print("WINDOW IS OPEN")
             return 1
         else: 
