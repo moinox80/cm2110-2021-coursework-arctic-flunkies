@@ -1,12 +1,14 @@
 import window as w 
 import Weather_api as wa
 import window_mechanism as wm
+import curtain as c
 import os
 import csv
 
 window = w.Window()
 api = wa.WeatherApi()
 window_mechanism = wm.WindowMechanism()
+curtain = c.Curtain()
 
 with open('user_data.txt', mode='r') as csv_file:
     csv_reader = csv.DictReader(csv_file)
@@ -15,7 +17,7 @@ with open('user_data.txt', mode='r') as csv_file:
         line_count += 1
     
     if line_count < 1:
-        preferred_temp = int(input("Welcome to SmartWindow, please input your preferred home temperature: "))
+        preferred_temp = int(input("Welcome to MyWindow, please input your preferred home temperature: "))
         window.set_preferred_temperature(preferred_temp)
         
     else:
@@ -25,8 +27,6 @@ with open('user_data.txt', mode='r') as csv_file:
                 line_count += 1
         window.set_preferred_temperature(row["temp"])
         api.set_city(row["city"])
-        print(row)
-        
         
         line_count += 1
 
@@ -34,8 +34,15 @@ with open('user_data.txt', mode='r') as csv_file:
         
             
 while True:
+    print("   [Time]")
+    print("-=" + curtain.get_time() + "=-")
+
+    if curtain.run_curtain() == 1:
+        print("Curtains are currently opened")
+    elif curtain.run_curtain() == 0:
+        print("Curtains are currently closed")
+    dashboard = input("-=MyWindow=-  \n[1] Run window \n[2] Check weather \n[3] Open window \n[4] Close window \n[5] Change city and preferred temperature \n[6] Close app\n")
     
-    dashboard = input("-=SmartWindow=-  \n[1] Run window \n[2] Check weather \n[3] Open window \n[4] Close window \n[5] Change city and preferred temperature \n[6] Close app\n")
 
     if dashboard == "1":
         window.window_work()
@@ -68,12 +75,7 @@ while True:
             writer = csv.DictWriter(csv_file, fieldnames=fieldnames)
 
             writer.writeheader()
-            writer.writerow({'temp': window.get_preferred_temperature(), 'city': api.get_city()})
-        with open('user_data.txt', mode='r') as csv_file:
-            csv_reader = csv.DictReader(csv_file)
-            line_count = 0
-            for row in csv_reader: 
-                print(row) 
+            writer.writerow({'temp': window.get_preferred_temperature(), 'city': api.get_city()}) 
         break
 
 
