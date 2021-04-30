@@ -1,25 +1,22 @@
-import paho.mqtt.Client as mqtt
+import paho.mqtt.client as mqtt
 import ssl
 import time
 import sys
 import json
 
 class MQTTClient:
-    def connect(self, user_name, password, clean_session, host, port):
-        """ Setup and connect to MQTT broker (using TLS) with the provided parameters 
-        :param user_name: For authentication with the broker
-        :type user_name: String
-        :param password: For authentication with the broker
-        :type password: String
-        :param clean_session: If the client should connection with a clean session or not
-        :type clean_session: Boolean
-        :param host: Address of host to connect to
-        :type host: String
-        :param port: Port of host to connect to
-        :type host: Int
-        """ 
-        self.__client = mqtt.Client (client_id = "" , clean_session = clean_session)
-        self.__client.username_pw_set (user_name, password)
+    def __init__(self):
+        self.__client = mqtt.Client (client_id = "" , clean_session = True)
+
+        self.__on_connect_method = self.__on_connect_placeholder
+        self.__on_disconnect_method = self.__on_disconnect_placeholder
+        self.__on_message_method = self.__on_message_placeholder
+        self.__on_publish_method = self.__on_publish_placeholder
+        self.__on_subscribe_method = self.__on_subscribe_placeholder
+        self.__on_unsubscribe_method = self.__on_unsubscribe_placeholder
+
+    def connect(self, username, password, clean_session, host, port):
+        self.__client.username_pw_set (username, password)
         # configure TLS connection
         self.__client.tls_set (cert_reqs=ssl.CERT_REQUIRED, tls_version=ssl.PROTOCOL_TLSv1_2)
         self.__client.tls_insecure_set (False)
@@ -32,13 +29,12 @@ class MQTTClient:
         self.__client.on_subscribe = self.__on_subscribe
         self.__client.on_unsubscribe = self.__on_unsubscribe
 
+
         # connect using keepalive to 60
-        print("connecting")
         self.__client.connect(host, port, keepalive = 60)
         self.__client.loop_forever(retry_first_connection=False)
         self.__client.connected_flag = False
         while not self.__client.connected_flag:           #wait in loop
-            print("not yet")
             time.sleep (1)
 
     def disconnect(self):
@@ -48,24 +44,47 @@ class MQTTClient:
             self.__client.loop_stop()
         self.__stop_threads = True
         # self._f.close()
+
     
-    def __on_connect(self, userdata, flags, rc):
+    def __on_connect(self, client, userdata, flags, rc):
+        self.__client.connected_flag = True
+        self.__on_connect_method(client, userdata, flags, rc)
+
+    def __on_disconnect(self, client, userdata, rc):
+        self.__client.connected_flag = False
+        self.__on_disconnect_method(client, userdata, rc)
+    
+    def __on_message(self, client, userdata, msg):
+        self.__on_message_method(client, userdata, msg)
+
+    def __on_publish(self, client, userdata, mid):
+        self.__on_publish_method(client, userdata, mid)
+
+    def __on_subscribe(self, client, userdata, mid, granted_qos):
+        self.__on_subscribe_method(client, userdata, mid, granted_qos)
+    
+    def __on_unsubscribe(self, client, userdata, mid):
+        self.__on_unsubscribe_method(client, userdata, mid)
+
+
+    def __on_connect_placeholder(self, client, userdata, flags, rc):
         pass
 
-    def __on_disconnect(self, userdata, rc):
+    def __on_disconnect_placeholder(self, client, userdata, rc):
         pass
     
-    def __on_message(self, userdata, msg):
+    def __on_message_placeholder(self, client, userdata, msg):
         pass
 
-    def __on_publish(self, userdata, mid):
+    def __on_publish_placeholder(self, client, userdata, mid):
         pass
 
-    def __on_subscribe(self, userdata, mid, granted_qos):
+    def __on_subscribe_placeholder(self, client, userdata, mid, granted_qos):
         pass
     
-    def __on_unsubscribe(self, userdata, mid):
+    def __on_unsubscribe_placeholder(self, client, userdata, mid):
         pass
+
 
     def set_callbacks(self, callbacks):
         if "on_connect" in callbacks:
@@ -82,29 +101,32 @@ class MQTTClient:
             self.set_on_unsubscribe(callbacks["on_unsubscribe"])
     
     def set_on_connect(self, callback):
-        self.__client.on_connect = callback
+        self.__on_connect_method = callback
     
     def set_on_disconnect(self, callback):
-        self.__client.on_disconnect = callback
+        self.__on_disconnect_method = callback
 
     def set_on_message(self, callback):
-        self.__client.on_message = callback
+        self.__on_message_method = callback
 
     def set_on_publish(self, callback):
-        self.__client.on_publish = callback
+        self.__on_publish_method = callback
     
     def set_on_subscribe(self, callback):
-        self.__client.on_subscribe = callback
+        self.__on_subscribe_method = callback
     
     def set_on_unsubscribe(self, callback):
-        self.__client.on_unsubscribe = callback
+        self.__on_unsubscribe_method = callback
     
 
 
     def publish(self, topic, payload=None, qos=0, retain=False, properties=None):
-        if self._client.connected_flag:
-            self.__client.publish(self, topic, payload, qos, retain, properties)
+        if self.__client.connected_flag:
+            print("Publishing " + str(payload) + " to topic " + topic)
+            self.__client.publish(topic, payload, qos, retain, properties)
+        else:
+            print("Connected flag is " + self.__client.connected_flag)
     
     def subscribe(self, topic, qos=0, options=None, properties=None):
-        if self._client.connected_flag:
+        if self.__client.connected_flag:
             self.__client.subscribe(self, topic, qos, options, properties)
