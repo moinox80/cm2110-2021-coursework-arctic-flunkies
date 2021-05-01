@@ -3,23 +3,11 @@ import ssl
 import time
 import sys
 import json
+import threading
 
 class MQTTClient:
-    def __init__(self):
-        self.__client = mqtt.Client (client_id = "" , clean_session = True)
-
-        self.__on_connect_method = self.__on_connect_placeholder
-        self.__on_disconnect_method = self.__on_disconnect_placeholder
-        self.__on_message_method = self.__on_message_placeholder
-        self.__on_publish_method = self.__on_publish_placeholder
-        self.__on_subscribe_method = self.__on_subscribe_placeholder
-        self.__on_unsubscribe_method = self.__on_unsubscribe_placeholder
-
-    def connect(self, username, password, clean_session, host, port):
-        self.__client.username_pw_set (username, password)
-        # configure TLS connection
-        self.__client.tls_set (cert_reqs=ssl.CERT_REQUIRED, tls_version=ssl.PROTOCOL_TLSv1_2)
-        self.__client.tls_insecure_set (False)
+    def __init__(self, client_id="", clean_session=True):
+        self.__client = mqtt.Client (client_id=client_id, clean_session=clean_session)
 
         # call back methods
         self.__client.on_connect = self.__on_connect
@@ -29,6 +17,18 @@ class MQTTClient:
         self.__client.on_subscribe = self.__on_subscribe
         self.__client.on_unsubscribe = self.__on_unsubscribe
 
+    def connect(self, username, password, host, port):
+        threading.Thread(
+            target=self.__connect_thread,
+            args=(username, password, host, port),
+            daemon=True
+        ).start()
+
+    def __connect_thread(self, username, password, host, port):
+        self.__client.username_pw_set (username, password)
+        # configure TLS connection
+        self.__client.tls_set (cert_reqs=ssl.CERT_REQUIRED, tls_version=ssl.PROTOCOL_TLSv1_2)
+        self.__client.tls_insecure_set (False)
 
         # connect using keepalive to 60
         self.__client.connect(host, port, keepalive = 60)
@@ -48,43 +48,41 @@ class MQTTClient:
     
     def __on_connect(self, client, userdata, flags, rc):
         self.__client.connected_flag = True
-        self.__on_connect_method(client, userdata, flags, rc)
+        try:
+            self.__on_connect_method(client, userdata, flags, rc)
+        except AttributeError:
+            pass
 
     def __on_disconnect(self, client, userdata, rc):
         self.__client.connected_flag = False
-        self.__on_disconnect_method(client, userdata, rc)
+        try:
+            self.__on_disconnect_method(client, userdata, rc)
+        except AttributeError:
+            pass
     
     def __on_message(self, client, userdata, msg):
-        self.__on_message_method(client, userdata, msg)
+        try:
+            self.__on_message_method(client, userdata, msg)
+        except AttributeError:
+            pass
 
     def __on_publish(self, client, userdata, mid):
-        self.__on_publish_method(client, userdata, mid)
+        try:
+            self.__on_publish_method(client, userdata, mid)
+        except AttributeError:
+            pass
 
     def __on_subscribe(self, client, userdata, mid, granted_qos):
-        self.__on_subscribe_method(client, userdata, mid, granted_qos)
+        try:
+            self.__on_subscribe_method(client, userdata, mid, granted_qos)
+        except AttributeError:
+            pass
     
     def __on_unsubscribe(self, client, userdata, mid):
-        self.__on_unsubscribe_method(client, userdata, mid)
-
-
-    def __on_connect_placeholder(self, client, userdata, flags, rc):
-        pass
-
-    def __on_disconnect_placeholder(self, client, userdata, rc):
-        pass
-    
-    def __on_message_placeholder(self, client, userdata, msg):
-        pass
-
-    def __on_publish_placeholder(self, client, userdata, mid):
-        pass
-
-    def __on_subscribe_placeholder(self, client, userdata, mid, granted_qos):
-        pass
-    
-    def __on_unsubscribe_placeholder(self, client, userdata, mid):
-        pass
-
+        try:
+            self.__on_unsubscribe_method(client, userdata, mid)
+        except AttributeError:
+            pass
 
     def set_callbacks(self, callbacks):
         if "on_connect" in callbacks:
