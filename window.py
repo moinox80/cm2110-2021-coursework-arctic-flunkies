@@ -30,7 +30,7 @@ class Window():
         if room_temp > pref_temp and room_temp > out_temp:
             self.__window_mechanism.open_window()
 
-            while room_temp > pref_temp:
+            while self.__temp_sensor.get_room_temperature() > pref_temp:
                 self.__temp_sensor.set_room_temperature(room_temp - 1)
                 print("Airing room: " + str(room_temp))
                 time.sleep(0.5)
@@ -41,7 +41,7 @@ class Window():
         elif room_temp < pref_temp and room_temp > out_temp:
             self.__window_mechanism.close_window()
 
-            while room_temp < pref_temp:
+            while self.__temp_sensor.get_room_temperature() < pref_temp:
                 self.__temp_sensor.set_room_temperature(room_temp + 1)
                 print("Heating room: " + str(room_temp))
                 time.sleep(0.5)
@@ -51,7 +51,7 @@ class Window():
         elif room_temp < pref_temp and room_temp < out_temp:
             self.__window_mechanism.open_window()
 
-            while room_temp < pref_temp:
+            while self.__temp_sensor.get_room_temperature() < pref_temp:
                 self.__temp_sensor.set_room_temperature(room_temp + 1)
                 print("Warming room: " + str(room_temp))
                 time.sleep(0.5)
@@ -62,8 +62,8 @@ class Window():
         elif room_temp > pref_temp and room_temp < out_temp:
             print("Air Conditioner turned on")
 
-            while room_temp > pref_temp:
-                self.__temp_sensor.set_room_temperature(room_temp + 1)
+            while self.__temp_sensor.get_room_temperature() > pref_temp:
+                self.__temp_sensor.set_room_temperature(room_temp - 1)
                 print("Cooling room: " + str(room_temp))
                 time.sleep(0.5)
             
