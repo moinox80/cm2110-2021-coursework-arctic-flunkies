@@ -22,11 +22,7 @@ class Gateway:
             "on_subscribe": self.mqtt_on_subscribe,
             "on_unsubscribe": self.mqtt_on_unsubscribe
         })
-        mqtt_thread = threading.Thread(
-            target=self.__mqtt.connect,
-            args=("sociot", "s7ci7tRGU", True, "soc-broker.rgu.ac.uk", 8883),
-            daemon=True
-        ).start()
+        self.__mqtt.connect("sociot", "s7ci7tRGU", "soc-broker.rgu.ac.uk", 8883)
 
         self.__aio_client = aio.Client("arthur_s", "aio_aDxm81JJmPzBbK3PAcEN9bW2sRWC")
 
