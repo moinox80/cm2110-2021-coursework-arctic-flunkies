@@ -2,13 +2,13 @@
 # MyWindow™
 <h4>Ensure the latest version of Python is installed (currently 3.9.4)</h4>
 
-Clone GitHub repository (available at https://github.com/WorkAtRGU/cm2110-2021-coursework-arctic-flunkies.git)
+<h4>Clone GitHub repository</h4> (available at https://github.com/WorkAtRGU/cm2110-2021-coursework-arctic-flunkies.git)
 
-Open command line 
+<h4>Open command line 
 
 Navigate to directory where Git repository is stored 
 
-<h4>Install Python modules with: </h4>
+Install Python modules with: </h4>
 
 python -m pip install -r requirements.txt
 
