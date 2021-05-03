@@ -101,23 +101,29 @@ class Window():
     def get_mqtt_topic_header(self):
         return "smart-windows/" + self.id + "/"
     
-    def update_file_value(self, window_id, attribute, value):
+    def update_file_value(self, attribute, value):
         window_data = []
 
         with open('window_data.txt', mode='r') as csv_file:
             reader = csv.DictReader(csv_file, fieldnames=self.FIELD_NAMES)
-            for row in reader:
-                id_int = int(row["id"])
 
-                if id_int == window_id:
-                    row[attribute] = value
-                
-                window_data.append(row)
+            for row in reader:
+                try:
+                    id_int = int(row["id"])
+                    new_row = row.copy()
+
+                    if str(id_int) == str(self.id):
+                        new_row[attribute] = value
+
+                    window_data.append(new_row)
+                except ValueError:
+                    pass
 
         with open('window_data.txt', mode='w') as csv_file:
             writer = csv.DictWriter(csv_file, fieldnames=self.FIELD_NAMES)
             writer.writeheader()
             writer.writerows(window_data)
+
     
     """def __to_csv_format(self, list_in):
         csv_string = ""
@@ -154,6 +160,7 @@ class Window():
 
         elif message.topic == header + "pref-temp":
             self.set_preferred_temperature(int(payload))
+            self.update_file_value("pref_temp", payload)
             print(self.__head + "PREFERRED TEMPERATURE SET TO " + payload)
 
         elif message.topic == header + "curtain":
@@ -167,6 +174,7 @@ class Window():
         elif message.topic == header + "curtain-time":
             set_time_success = self.__curtain.set_time_setting(payload)
             if set_time_success:
+                self.update_file_value("curtain_time", payload)
                 print(self.__head + "SET CURTAINS OPEN TIME TO " + payload)
             else:
                 print(self.__head + "ERROR: INVALID TIME RANGE FORMAT")
