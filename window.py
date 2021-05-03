@@ -14,6 +14,7 @@ class Window():
     FIELD_NAMES = ["id","pref_temp","curtain_time"]
 
     def __init__(self, id=0, preferred_temperature=0, curtain_time="0700-1900"):
+        """Sets up virtual sensors and actuators as well as MQTT client"""
         self.id = id
         self.__preferred_temperature = preferred_temperature
         self.__curtain = self.CURTAIN
@@ -23,8 +24,6 @@ class Window():
         self.__temp_sensor = self.TEMPERATURE_SENSOR
 
         self.__head = "Window #" + str(id) + " << "
-        
-        #self.__field_names_csv = self.__to_csv_format(self.FIELD_NAMES)
 
         self.__mqtt = mqtt.MQTTClient()
         self.__mqtt.set_on_connect(self.__mqtt_on_connect)
@@ -34,12 +33,14 @@ class Window():
         self.run_window()
     
     def run_window(self):
+        """Runs main loop on seperate thread"""
         threading.Thread(
             target=self.window_work,
             daemon=True
         ).start()
 
     def window_work(self):
+        """Main loop, which monitors indoor and outside temperature and adjusts room temperature accordingly"""
         while True:
             room_temp = self.__temp_sensor.get_room_temperature()
             pref_temp = float(self.__preferred_temperature)
@@ -93,15 +94,19 @@ class Window():
                 print(self.__head + "Temperature stabilized")
         
     def set_preferred_temperature(self, new_value):
+        """Sets preferred temperature"""
         self.__preferred_temperature = new_value
 
     def get_preferred_temperature(self):
+        """Gets preferred temperature"""
         return self.__preferred_temperature
     
     def get_mqtt_topic_header(self):
+        """Gets the start of the MQTT topic, which includes the window id"""
         return "smart-windows/" + self.id + "/"
     
     def update_file_value(self, attribute, value):
+        """Updates the specified value in the window_data.txt file"""
         window_data = []
 
         with open('window_data.txt', mode='r') as csv_file:
@@ -123,18 +128,9 @@ class Window():
             writer = csv.DictWriter(csv_file, fieldnames=self.FIELD_NAMES)
             writer.writeheader()
             writer.writerows(window_data)
-
     
-    """def __to_csv_format(self, list_in):
-        csv_string = ""
-        list_length = len(list_in)
-        for i in range(0, list_length):
-            csv_string += elm
-            if i == list_length - 1: break
-            csv_string += ","
-        return csv_string"""
-
     def __mqtt_on_connect(self, client, userdata, flags, rc):
+        """On connection, subscribes to various topics on the MQTT broker"""
         print(self.__head + "Connected to MQTT broker with RC: " + str(rc))
         if rc == 0:
             header = self.get_mqtt_topic_header()
@@ -142,11 +138,9 @@ class Window():
             self.__mqtt.subscribe(header + "curtain")
             self.__mqtt.subscribe(header + "curtain-time")
             self.__mqtt.subscribe(header + "window")
-
-    def __mqtt_on_disconnect(self, client, userdata, rc):
-        pass
-
+    
     def __mqtt_on_message(self, client, userdata, message):
+        """When a message is received, run the code associated with the topic"""
         header = self.get_mqtt_topic_header()
         payload = message.payload.decode("utf-8")
 
@@ -178,12 +172,3 @@ class Window():
                 print(self.__head + "SET CURTAINS OPEN TIME TO " + payload)
             else:
                 print(self.__head + "ERROR: INVALID TIME RANGE FORMAT")
-
-    def __mqtt_on_publish(self, client, userdata, mid):
-        pass
-
-    def __mqtt_on_subscribe(self, client, userdata, mid, granted_qos):
-        pass
-
-    def __mqtt_on_unsubscribe(self, client, userdata, mid):
-        pass

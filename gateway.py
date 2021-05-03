@@ -3,19 +3,12 @@ import Adafruit_IO as aio
 import json
 import threading
 import time
-from queue import Queue
 
 class Gateway:
     def __init__(self):
+        """Sets up MQTT and Adafruit connection clients"""
         self.__mqtt = mqtt.MQTTClient()
-        self.__mqtt.set_callbacks({
-            "on_connect": self.mqtt_on_connect,
-            "on_disconnect": self.mqtt_on_disconnect,
-            "on_message": self.mqtt_on_message,
-            "on_publish": self.mqtt_on_publish,
-            "on_subscribe": self.mqtt_on_subscribe,
-            "on_unsubscribe": self.mqtt_on_unsubscribe
-        })
+        self.__mqtt.set_on_connect(self.__mqtt_on_connect)
         self.__mqtt.connect("sociot", "s7ci7tRGU", "soc-broker.rgu.ac.uk", 8883)
         
         #self.__aio_client = aio.Client()
@@ -25,26 +18,30 @@ class Gateway:
         self.__feed_watch = {}
 
         aio_thread = threading.Thread(
-            target=self.monitor_feeds,
+            target=self.__monitor_feeds,
             daemon=True
         ).start()
     
     def send_to_feed(self, feed, data):
+        """Sends data to specified Adafruit feed"""
         try:
             self.__aio_client.create_data(feed, aio.Data(value=data))
         except aio.RequestError:
             print("Error while connecting to Adafruit")
 
     def data(self, feed):
+        """Returns data from specified Adafruit feed"""
         try:
             return self.__aio_client.data(feed)
         except aio.RequestError:
             print("Error while connecting to Adafruit")
     
-    def mqtt_on_connect(self, client, userdata, flags, rc):
+    def __mqtt_on_connect(self, client, userdata, flags, rc):
+        """Prints out a string containing RC on connection"""
         print("Connected to MQTT broker with RC: " + str(rc))
     
-    def monitor_feeds(self):
+    def __monitor_feeds(self):
+        """Looks for changes in Adafruit feeds and publishes new data to MQTT broker"""
         while True:
             differences = []
             for feed in self.__feeds:
@@ -71,22 +68,3 @@ class Gateway:
                         self.__mqtt.publish("smart-windows/0/" + value_name, self.__feed_watch[value_name])
             except IndexError:
                 pass
-
-    def mqtt_on_disconnect(self, client, userdata, rc):
-        pass
-
-    def mqtt_on_message(self, client, userdata, message):
-        pass
-
-    def mqtt_on_publish(self, client, userdata, mid):
-        pass
-
-    def mqtt_on_subscribe(self, client, userdata, mid, granted_qos):
-        pass
-
-    def mqtt_on_unsubscribe(self, client, userdata, mid):
-        pass
-
-    """def run_queue(self):
-        while True:
-            if not self.__q.empty():"""

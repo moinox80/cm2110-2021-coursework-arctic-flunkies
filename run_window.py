@@ -3,6 +3,7 @@ import csv
 
 windows = []
 
+#Initialise a window with all of the settings from window_data.txt
 with open('window_data.txt', mode='r') as csv_file:
     csv_reader = csv.DictReader(csv_file)
     for row in csv_reader:
@@ -14,6 +15,4 @@ with open('window_data.txt', mode='r') as csv_file:
         windows.append(w)
 
 while True:
-    """
-    Run Window
-    """
+    #Run until keybaord interrupt
