@@ -3,11 +3,13 @@ import json
 import csv
 
 class WeatherApi:
+    #Stating weather attributes
     CURRENT_TEMP = ""
     CURRENT_HUMIDITY = ""
     CURRENT_WEATHER = ""
     WEATHER_DESCRIPTION = ""
     CITY=""
+    #Getting the city from the user or the file
     with open('user_data.txt', mode='r') as csv_file:
         csv_reader = csv.DictReader(csv_file)
         line_count = 0
@@ -25,6 +27,7 @@ class WeatherApi:
     
         line_count += 1
     
+    #OpenWeatherMap api settings
     url = "https://community-open-weather-map.p.rapidapi.com/find"
 
     querystring = {"q": str(CITY),"cnt":"1","mode":"null","lon":"0","type":"link, accurate","lat":"0","units":"metric"}
@@ -50,7 +53,7 @@ class WeatherApi:
         CURRENT_WEATHER = q[0]["main"]
         WEATHER_DESCRIPTION = q[0]["description"]
         
-
+    #Initializing attributes
     def __init__(self): 
             self.__current_temperature = self.CURRENT_TEMP
             self.__current_humidity = self.CURRENT_HUMIDITY
@@ -59,7 +62,7 @@ class WeatherApi:
             self.__city = self.CITY
     
             
-  
+    #Getter methods from the api
     def get_current_temperature(self):
         return self.__current_temperature
 
@@ -75,8 +78,11 @@ class WeatherApi:
     def get_weather_data(self):
         return "Temperature in " + str(self.__city) + " is " + str(self.__current_temperature) + "C\nThere is currently " + str(self.__weather_description) + "\nHumidity is " + str(self.__current_humidity)
 
+    def get_city(self):
+        return self.__city
+
+    #Setter method for the city
     def set_city(self, new_value):
         self.__city = new_value
 
-    def get_city(self):
-        return self.__city
+    

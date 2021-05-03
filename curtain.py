@@ -1,6 +1,7 @@
 import time
 
 class Curtain:
+    #Stating attributes 
     OPEN=1
     CLOSED=0
     t = time.localtime()
@@ -8,6 +9,7 @@ class Curtain:
     time_1 = 0
     time_2 = 0
 
+    #Intializing attributes
     def __init__(self):
         self.__current_time = self.current_time
         self.__time = self.t
@@ -15,6 +17,7 @@ class Curtain:
         self.__opening_time = self.current_time
         self.__closing_time = self.current_time
 
+    #Running the curtain
     def run_curtain(self):
         if (self.__time.tm_hour >= self.__opening_time.tm_hour
         and self.__time.tm_hour < self.__closing_time.tm_hour
@@ -24,6 +27,7 @@ class Curtain:
         else:
             self.close_curtain()
 
+    #To adjust the time settings
     def set_time_setting(self, setting):
         time_range = setting.split("-")
 
@@ -37,7 +41,7 @@ class Curtain:
         except ValueError:
             return False
 
-
+    
     def get_time(self):
         return self.__current_time
     
