@@ -18,6 +18,7 @@ class Gateway:
         })
         self.__mqtt.connect("sociot", "s7ci7tRGU", "soc-broker.rgu.ac.uk", 8883)
         
+        #self.__aio_client = aio.Client()
         self.__aio_client = aio.Client("arthur_s", "aio_aDxm81JJmPzBbK3PAcEN9bW2sRWC")
 
         self.__feeds = ("pref-temp", "curtain", "curtain-time", "window")
@@ -41,7 +42,7 @@ class Gateway:
             print("Error while connecting to Adafruit")
     
     def mqtt_on_connect(self, client, userdata, flags, rc):
-        print("Connected with rc code " + str(rc))
+        print("Connected to MQTT broker with RC: " + str(rc))
     
     def monitor_feeds(self):
         while True:
@@ -67,7 +68,7 @@ class Gateway:
                 for i in range(0, len(self.__feed_watch)):
                     if differences[i]:
                         value_name = self.__feeds[i]
-                        self.__mqtt.publish("windows/0/" + value_name, self.__feed_watch[value_name])
+                        self.__mqtt.publish("smart-windows/0/" + value_name, self.__feed_watch[value_name])
             except IndexError:
                 pass
 

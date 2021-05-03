@@ -1,1 +1,2 @@
 id,pref_temp,curtain_time
+0,20,0700-1900

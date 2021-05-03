@@ -16,10 +16,10 @@ class Curtain:
         self.__closing_time = self.current_time
 
     def run_curtain(self):
-        if self.__time.tm_hour >= self.__opening_time.tm_hour
+        if (self.__time.tm_hour >= self.__opening_time.tm_hour
         and self.__time.tm_hour < self.__closing_time.tm_hour
         and self.__time.tm_min >= self.__opening_time.tm_min
-        and self.__time.tm_min < self.__closing_time.tm_min:
+        and self.__time.tm_min < self.__closing_time.tm_min):
             self.open_curtain()
         else:
             self.close_curtain()
@@ -31,8 +31,9 @@ class Curtain:
             return False
             
         try:
-            self.__opening_time = time.strptime(time_range[0], "%H %M")
-            self.__closing_time = time.strptime(time_range[1], "%H %M")
+            self.__opening_time = time.strptime(time_range[0], "%H%M")
+            self.__closing_time = time.strptime(time_range[1], "%H%M")
+            return True
         except ValueError:
             return False
 

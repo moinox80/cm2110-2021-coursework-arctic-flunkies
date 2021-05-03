@@ -10,10 +10,10 @@ class TemperatureSensor:
         self.__outside_temperature = self.MEASURED_OUTSIDE_TEMP
         
     def get_room_temperature(self):
-        return self.__room_temperature
+        return int(self.__room_temperature)
 
     def get_outside_temperature(self):
-        return self.__outside_temperature
+        return int(self.__outside_temperature)
 
     def set_room_temperature(self, new_value):
         self.__room_temperature = new_value

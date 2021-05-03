@@ -22,7 +22,7 @@ class Window():
         self.__window_mechanism = self.WINDOW_MECHANISM
         self.__temp_sensor = self.TEMPERATURE_SENSOR
 
-        self.__head = "Window #" + str(id) + "<< "
+        self.__head = "Window #" + str(id) + " << "
         
         #self.__field_names_csv = self.__to_csv_format(self.FIELD_NAMES)
 
@@ -35,45 +35,48 @@ class Window():
     
     def run_window(self):
         threading.Thread(
-            target=window_work,
+            target=self.window_work,
             daemon=True
         ).start()
 
     def window_work(self):
-        room_temp = self.__temp_sensor.get_room_temperature()
-        pref_temp = self.__preferred_temperature
-        out_temp = self.__temp_sensor.get_outside_temperature()
-        
         while True:
+            room_temp = self.__temp_sensor.get_room_temperature()
+            pref_temp = float(self.__preferred_temperature)
+            out_temp = self.__temp_sensor.get_outside_temperature()
+
             #When room temperature is higher than the preferred temperature and room temperature is higher than outside
             if room_temp > pref_temp and room_temp > out_temp:
                 self.__window_mechanism.open_window()
 
-                while self.__temp_sensor.get_room_temperature() > pref_temp:
+                while room_temp > pref_temp:
                     self.__temp_sensor.set_room_temperature(room_temp - 1)
                     print(self.__head + "Airing room: " + str(room_temp))
                     time.sleep(0.5)
+                    room_temp = self.__temp_sensor.get_room_temperature()
 
                 self.__window_mechanism.close_window()
-                printself.__(head + "Temperature stabilized")
+                print(self.__head + "Temperature stabilized")
             #When room temperature is lower than preferred temperature and room temperature is lower than outside.
             elif room_temp < pref_temp and room_temp > out_temp:
                 self.__window_mechanism.close_window()
 
-                while self.__temp_sensor.get_room_temperature() < pref_temp:
+                while room_temp < pref_temp:
                     self.__temp_sensor.set_room_temperature(room_temp + 1)
                     print(self.__head + "Heating room: " + str(room_temp))
                     time.sleep(0.5)
+                    room_temp = self.__temp_sensor.get_room_temperature()
                     
                 print(self.__head + "Temperature stabilized")
             #When room temperature is lower than preferred temperature and room temperature is lower than outside
             elif room_temp < pref_temp and room_temp < out_temp:
                 self.__window_mechanism.open_window()
 
-                while self.__temp_sensor.get_room_temperature() < pref_temp:
+                while room_temp < pref_temp:
                     self.__temp_sensor.set_room_temperature(room_temp + 1)
                     print(self.__head + "Warming room: " + str(room_temp))
                     time.sleep(0.5)
+                    room_temp = self.__temp_sensor.get_room_temperature()
                 
                 self.__window_mechanism.close_window()
                 print(self.__head + "Temperature stabilized")
@@ -81,10 +84,11 @@ class Window():
             elif room_temp > pref_temp and room_temp < out_temp:
                 print(self.__head + "Air Conditioner turned on")
 
-                while self.__temp_sensor.get_room_temperature() > pref_temp:
+                while room_temp > pref_temp:
                     self.__temp_sensor.set_room_temperature(room_temp - 1)
                     print(self.__head + "Cooling room: " + str(room_temp))
                     time.sleep(0.5)
+                    room_temp = self.__temp_sensor.get_room_temperature()
                 
                 print(self.__head + "Temperature stabilized")
         
@@ -95,7 +99,7 @@ class Window():
         return self.__preferred_temperature
     
     def get_mqtt_topic_header(self):
-        return "windows/" + self.id + "/"
+        return "smart-windows/" + self.id + "/"
     
     def update_file_value(self, window_id, attribute, value):
         window_data = []
@@ -124,37 +128,54 @@ class Window():
             csv_string += ","
         return csv_string"""
 
-    def __mqtt_on_connect(client, userdata, flags, rc):
-        header = get_mqtt_topic_header()
-        self.__mqtt.subscribe(header + "pref-temp")
-        self.__mqtt.subscribe(header + "curtain")
-        self.__mqtt.subscribe(header + "curtain-time")
-        self.__mqtt.subscribe(header + "window")
+    def __mqtt_on_connect(self, client, userdata, flags, rc):
+        print(self.__head + "Connected to MQTT broker with RC: " + str(rc))
+        if rc == 0:
+            header = self.get_mqtt_topic_header()
+            self.__mqtt.subscribe(header + "pref-temp")
+            self.__mqtt.subscribe(header + "curtain")
+            self.__mqtt.subscribe(header + "curtain-time")
+            self.__mqtt.subscribe(header + "window")
 
-    def __mqtt_on_disconnect(client, userdata, rc):
+    def __mqtt_on_disconnect(self, client, userdata, rc):
         pass
 
-    def __mqtt_on_message(client, userdata, message):
-        if message.topic == "window":
-            if message.payload == "Open":
+    def __mqtt_on_message(self, client, userdata, message):
+        header = self.get_mqtt_topic_header()
+        payload = message.payload.decode("utf-8")
+
+        if message.topic == header + "window":
+            if payload == "Open":
                 self.__window_mechanism.open_window()
-            elif message.payload == "Closed":
+                print(self.__head + "WINDOW OPENED")
+            elif payload == "Closed":
                 self.__window_mechanism.close_window()
-        elif message.topic == "pref-temp":
-            self.set_preferred_temperature(int(message.payload))
-        elif message.topic == "curtain":
-            if message.payload == "Open":
+                print(self.__head + "WINDOW CLOSED")
+
+        elif message.topic == header + "pref-temp":
+            self.set_preferred_temperature(int(payload))
+            print(self.__head + "PREFERRED TEMPERATURE SET TO " + payload)
+
+        elif message.topic == header + "curtain":
+            if payload == "Open":
                 self.__curtain.open_curtain()
-            elif message.payload == "Closed":
+                print(self.__head + "CURTAINS OPENED")
+            elif payload == "Closed":
                 self.__curtain.close_curtain()
-        elif message.topic == "curtain-time":
-            self.__curtain.set_time_setting(message.payload)
+                print(self.__head + "CURTAINS CLOSED")
 
-    def __mqtt_on_publish(client, userdata, mid):
+        elif message.topic == header + "curtain-time":
+            set_time_success = self.__curtain.set_time_setting(payload)
+            if set_time_success:
+                print(self.__head + "SET CURTAINS OPEN TIME TO " + payload)
+            else:
+                print(self.__head + "ERROR: INVALID TIME RANGE FORMAT")
+
+    def __mqtt_on_publish(self, client, userdata, mid):
         pass
 
-    def __mqtt_on_subscribe(client, userdata, mid, granted_qos):
+    def __mqtt_on_subscribe(self, client, userdata, mid, granted_qos):
         pass
 
-    def __mqtt_on_unsubscribe(client, userdata, mid):
+    def __mqtt_on_unsubscribe(self, client, userdata, mid):
         pass

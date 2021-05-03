@@ -44,7 +44,11 @@ class MQTTClient:
         self.__stop_threads = True
     
     def __on_connect(self, client, userdata, flags, rc):
-        self.__client.connected_flag = True
+        if rc == 0:
+            self.__client.connected_flag = True
+        else:
+            self.__client.connected_flag = False
+
         try:
             self.__on_connect_method(client, userdata, flags, rc)
         except AttributeError:
@@ -124,4 +128,5 @@ class MQTTClient:
     
     def subscribe(self, topic, qos=0, options=None, properties=None):
         if self.__client.connected_flag:
-            self.__client.subscribe(self, topic, qos, options, properties)
+            print("Subscribing to topic " + topic)
+            self.__client.subscribe(topic, qos, options, properties)
