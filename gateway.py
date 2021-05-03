@@ -7,12 +7,6 @@ from queue import Queue
 
 class Gateway:
     def __init__(self):
-        """self.__q = Queue()
-        queue_thread = threading.Thread(
-            target=self.run_queue,
-            daemon=True
-        ).start()"""
-
         self.__mqtt = mqtt.MQTTClient()
         self.__mqtt.set_callbacks({
             "on_connect": self.mqtt_on_connect,
@@ -23,10 +17,10 @@ class Gateway:
             "on_unsubscribe": self.mqtt_on_unsubscribe
         })
         self.__mqtt.connect("sociot", "s7ci7tRGU", "soc-broker.rgu.ac.uk", 8883)
-
+        
         self.__aio_client = aio.Client("arthur_s", "aio_aDxm81JJmPzBbK3PAcEN9bW2sRWC")
 
-        self.__feeds = ("closing-temp", "curtain", "curtain-time", "window")
+        self.__feeds = ("pref-temp", "curtain", "curtain-time", "window")
         self.__feed_watch = {}
 
         aio_thread = threading.Thread(

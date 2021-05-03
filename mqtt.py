@@ -9,7 +9,6 @@ class MQTTClient:
     def __init__(self, client_id="", clean_session=True):
         self.__client = mqtt.Client (client_id=client_id, clean_session=clean_session)
 
-        # call back methods
         self.__client.on_connect = self.__on_connect
         self.__client.on_disconnect = self.__on_disconnect
         self.__client.on_message = self.__on_message
@@ -25,26 +24,24 @@ class MQTTClient:
         ).start()
 
     def __connect_thread(self, username, password, host, port):
-        self.__client.username_pw_set (username, password)
-        # configure TLS connection
-        self.__client.tls_set (cert_reqs=ssl.CERT_REQUIRED, tls_version=ssl.PROTOCOL_TLSv1_2)
+        self.__client.username_pw_set(username, password)
+
+        self.__client.tls_set(cert_reqs=ssl.CERT_REQUIRED, tls_version=ssl.PROTOCOL_TLSv1_2)
         self.__client.tls_insecure_set (False)
 
-        # connect using keepalive to 60
+        self.__stop_threads = False
+
         self.__client.connect(host, port, keepalive = 60)
         self.__client.loop_forever(retry_first_connection=False)
         self.__client.connected_flag = False
-        while not self.__client.connected_flag:           #wait in loop
-            time.sleep (1)
+        while not self.__client.connected_flag:
+            time.sleep(1)
 
     def disconnect(self):
-        """ Disconnected from the MQTT broker, if connected """
         if self.__client.connected_flag == True:
             self.__client.disconnect()
             self.__client.loop_stop()
         self.__stop_threads = True
-        # self._f.close()
-
     
     def __on_connect(self, client, userdata, flags, rc):
         self.__client.connected_flag = True
