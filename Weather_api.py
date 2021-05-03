@@ -15,7 +15,7 @@ class WeatherApi:
         line_count = 0
         for row in csv_reader:
             line_count += 1
-    
+        
         if line_count < 1:
             CITY = input('Please input the city you live in: ')
         else:
