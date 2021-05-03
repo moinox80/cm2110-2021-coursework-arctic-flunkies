@@ -1,6 +1,7 @@
 import window_mechanism as wm 
 import TemperatureSensor as ts 
 import curtain as c
+import Weather_api as wa
 import csv
 import mqtt
 import random
@@ -11,6 +12,7 @@ class Window():
     WINDOW_MECHANISM = wm.WindowMechanism()
     TEMPERATURE_SENSOR = ts.TemperatureSensor()
     CURTAIN = c.Curtain()
+    API = wa.WeatherApi()
     FIELD_NAMES = ["id","pref_temp","curtain_time"]
 
     def __init__(self, id=0, preferred_temperature=0, curtain_time="0700-1900"):
@@ -19,7 +21,7 @@ class Window():
         self.__preferred_temperature = preferred_temperature
         self.__curtain = self.CURTAIN
         self.__curtain.set_time_setting(curtain_time)
-
+        self.__api = self.API
         self.__window_mechanism = self.WINDOW_MECHANISM
         self.__temp_sensor = self.TEMPERATURE_SENSOR
 
@@ -128,6 +130,15 @@ class Window():
             writer = csv.DictWriter(csv_file, fieldnames=self.FIELD_NAMES)
             writer.writeheader()
             writer.writerows(window_data)
+
+        with open('user_data.txt', mode='w') as csv_file:
+            fieldnames = ['city']
+            writer = csv.DictWriter(csv_file, fieldnames=fieldnames)
+
+            writer.writeheader()
+            writer.writerow({'city': self.__api.get_city()})
+
+
     
     def __mqtt_on_connect(self, client, userdata, flags, rc):
         """On connection, subscribes to various topics on the MQTT broker"""

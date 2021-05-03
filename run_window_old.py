@@ -61,21 +61,21 @@ while True:
         api.set_city(city)
         window.set_preferred_temperature(temp)
         with open('user_data.txt', mode='w') as csv_file:
-            fieldnames = ['temp', 'city']
+            fieldnames = ['city']
             writer = csv.DictWriter(csv_file, fieldnames=fieldnames)
 
             writer.writeheader()
-            writer.writerow({'temp': window.get_preferred_temperature(), 'city': api.get_city()})
+            writer.writerow({'city': api.get_city()})
         
         print("Changes saved, please restart the program")
         break
     elif dashboard == "6":
         with open('user_data.txt', mode='w') as csv_file:
-            fieldnames = ['temp', 'city']
+            fieldnames = ['city']
             writer = csv.DictWriter(csv_file, fieldnames=fieldnames)
 
             writer.writeheader()
-            writer.writerow({'temp': window.get_preferred_temperature(), 'city': api.get_city()}) 
+            writer.writerow({'city': api.get_city()}) 
         break
 
 
