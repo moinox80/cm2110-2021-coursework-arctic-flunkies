@@ -8,38 +8,38 @@ Open command line
 
 Navigate to directory where Git repository is stored 
 
-Install Python modules with: 
+<h4>Install Python modules with: </h4>
 
-<h4>python -m pip install -r requirements.txt</h4>
+python -m pip install -r requirements.txt
 
-Run command: 
+<h4>Run command: </h4> 
 
-<h4>python run_gateway.py</h4> 
+python run_gateway.py
 
-Open second command line 
+<h4>Open second command line 
 
 Navigate again to repository directory 
 
-Run command: 
+Run command:</h4> 
 
 Python run_window.py 
 
-Enter city for use with the weather API 
+<h4>Enter city for use with the weather API 
 
-Connect to Adafruit dashboard 
+Connect to Adafruit dashboard</h4> 
 
 Go to https://io.adafruit.com 
 
 Click Sign In 
 
-Enter account details: 
+<h4>Enter account details: </h4>
 
 Username: arthur_s 
 
 Password: CM2110Assessment 
 
-Go to “Smart Windows” dashboard 
+<h4>Go to</h4> “Smart Windows” <h4>dashboard 
 
-Storage data for individual windows is stored in window_data.txt 
+Storage data for individual windows is stored in</h4> window_data.txt 
 
-Storage data for the user is stored in user_data.txt 
+<h4>Storage data for the user is stored in</h4> user_data.txt 
