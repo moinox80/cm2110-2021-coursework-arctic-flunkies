@@ -10,11 +10,11 @@ Navigate to directory where Git repository is stored
 
 Install Python modules with: 
 
-python -m pip install -r requirements.txt 
+<h4>python -m pip install -r requirements.txt</h4>
 
 Run command: 
 
-python run_gateway.py 
+<h4>python run_gateway.py</h4> 
 
 Open second command line 
 
