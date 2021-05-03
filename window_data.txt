@@ -1,0 +1,1 @@
+id,pref_temp,curtain_time
