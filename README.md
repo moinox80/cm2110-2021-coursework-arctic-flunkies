@@ -1,8 +1,8 @@
 # CM2110-2021-CW
 # MyWindow™
-<h3>Ensure the latest version of Python is installed (currently 3.9.4)</h3>
+<h4>Ensure the latest version of Python is installed (currently 3.9.4)</h4>
 
-<p>Clone GitHub repository (available at https://github.com/WorkAtRGU/cm2110-2021-coursework-arctic-flunkies.git)</p> 
+Clone GitHub repository (available at https://github.com/WorkAtRGU/cm2110-2021-coursework-arctic-flunkies.git)
 
 Open command line 
 
