@@ -5,6 +5,8 @@ class Curtain:
     CLOSED=0
     t = time.localtime()
     current_time = time.strftime("%H:%M:%S", t)
+    time_1 = 0
+    time_2 = 0
 
     def __init__(self):
         self.__current_time = self.current_time
