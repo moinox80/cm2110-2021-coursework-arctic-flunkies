@@ -6,3 +6,4 @@ gw = gateway.Gateway()
 
 while True:
     #Run until keyboard interrupt
+    time.sleep(10)

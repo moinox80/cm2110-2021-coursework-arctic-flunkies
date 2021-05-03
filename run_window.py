@@ -16,3 +16,4 @@ with open('window_data.txt', mode='r') as csv_file:
 
 while True:
     #Run until keybaord interrupt
+    time.sleep(10)
