@@ -41,6 +41,7 @@ class Window():
             daemon=True
         ).start()
 
+
     def window_work(self):
         """Main loop, which monitors indoor and outside temperature and adjusts room temperature accordingly"""
         while True:
@@ -94,7 +95,8 @@ class Window():
                     room_temp = self.__temp_sensor.get_room_temperature()
                 
                 print(self.__head + "Temperature stabilized")
-        
+
+    #Setter and getter methods
     def set_preferred_temperature(self, new_value):
         """Sets preferred temperature"""
         self.__preferred_temperature = new_value
