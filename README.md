@@ -38,8 +38,8 @@ Username: arthur_s
 
 Password: CM2110Assessment 
 
-<h4>Go to</h4> “Smart Windows” <h4>dashboard 
+<h4>Go to</h4> “Smart Windows” dashboard 
 
-Storage data for individual windows is stored in</h4> window_data.txt 
+<h4>Storage data for individual windows is stored in</h4> window_data.txt 
 
 <h4>Storage data for the user is stored in</h4> user_data.txt 
